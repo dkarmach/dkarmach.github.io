@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deewosh Karmacharya | Software Engineer</title>
+<meta name="description" content="Deewosh Karmacharya is a software engineer working on FedRAMP compliance and DevSecOps platforms, and a Georgia Tech M.S. in Computer Science student.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght,SOFT@0,9..144,500..700,50;1,9..144,400..500,50&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbf6ee; --fg: #2a2118; --muted: #6a5c4d; --card: #fffdf8; --line: #eadfcc;
+    --terra: #a8472a; --teal: #1d6a66; --gold: #b7791f; --sage: #4f6e44; --blue: #2149e6; --blue-bg: #e1e7fc;
+    --terra-bg: #f6e3da; --teal-bg: #dcefec; --gold-bg: #f6e8cc; --sage-bg: #e3edd9;
+    --serif: "Fraunces", Georgia, "Times New Roman", serif;
+    --sans: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  /* Night scene = dark palette. The script sets data-mode from the live sky (day -> light, night -> dark). */
+  :root[data-mode="dark"] {
+    --bg: #1a1c20; --fg: #f4f2ee; --muted: #c0bcb3; --card: #24262b; --line: #3a3d43;
+    --terra: #f0a080; --teal: #72cbc4; --gold: #ebbb5c; --sage: #aac998; --blue: #7d9bff; --blue-bg: #1e2a5a;
+    --terra-bg: #3a2318; --teal-bg: #183a38; --gold-bg: #3a2f17; --sage-bg: #243126;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 17px/1.7 var(--sans); transition: background .8s, color .8s; }
+  header, main, footer { position: relative; z-index: 1; }
+
+  /* ---------- Live sky background ---------- */
+  #sky { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+         background: linear-gradient(180deg, var(--sky-top, #8fd0ff), var(--sky-bot, #eaf6ff)); transition: background 1s; }
+  #sky .veil { position: absolute; inset: 0; z-index: 3;
+               background: color-mix(in srgb, var(--bg) calc(var(--veil, 45) * 1%), transparent); }
+  #sky .flash { position: absolute; inset: 0; background: #fff; opacity: 0; z-index: 5; }
+  #sky .flash.go { animation: flash .6s ease-out; }
+  @keyframes flash { 0% { opacity: .32; } 15% { opacity: .06; } 30% { opacity: .28; } 100% { opacity: 0; } }
+  #sky canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 4; }
+  #sky .sun, #sky .moon { position: absolute; display: none; z-index: 4; }
+  #sky .sun { top: 5vh; right: 9vw; width: 120px; height: 120px; border-radius: 50%;
+              background: radial-gradient(circle, #fff7c2 0 28%, rgba(255, 214, 90, .75) 42%, rgba(255, 214, 90, 0) 70%);
+              animation: pulse 6s ease-in-out infinite; }
+  #sky .moon { top: 6vh; right: 10vw; width: 64px; height: 64px; border-radius: 50%; background: #f4f1e6;
+               box-shadow: inset -14px -6px 0 0 #d9d5c6, 0 0 40px 12px rgba(230, 235, 255, .35); }
+  #sky[data-time="day"] .sun { display: block; }
+  #sky[data-time="night"] .moon { display: block; }
+  #sky .sun.dim { opacity: .35; } #sky .moon.dim { opacity: .45; }
+  @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+  #sky .stars i { position: absolute; width: 2px; height: 2px; border-radius: 50%; background: #fff; z-index: 2;
+                  animation: twinkle 3.5s ease-in-out infinite; }
+  @keyframes twinkle { 0%, 100% { opacity: .9; } 50% { opacity: .25; } }
+  #sky .cloud { position: absolute; left: -45vw; top: var(--y); width: var(--w); height: calc(var(--w) * .26); z-index: 2;
+                background: var(--cloud, #fff); opacity: var(--o, .9); border-radius: 999px; filter: blur(2px);
+                animation: drift var(--dur) linear infinite; animation-delay: var(--delay); }
+  #sky .cloud::before, #sky .cloud::after { content: ""; position: absolute; background: inherit; border-radius: 50%; }
+  #sky .cloud::before { width: 46%; height: 150%; left: 14%; top: -62%; }
+  #sky .cloud::after  { width: 34%; height: 115%; left: 52%; top: -42%; }
+  @keyframes drift { from { transform: translateX(0); } to { transform: translateX(170vw); } }
+  #sky.still .cloud, #sky.still .stars i, #sky.still .sun { animation: none; }
+  #sky.still .cloud { left: var(--x, 20vw); }
+
+  /* ---------- Small settings pills (theme + motion) ---------- */
+  .controls { position: fixed; right: 14px; bottom: 14px; z-index: 10; display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .controls button { font: 600 0.8rem/1 var(--sans); padding: 8px 13px; border-radius: 99px; cursor: pointer;
+                     background: var(--card); color: var(--fg); border: 1px solid var(--line); box-shadow: 0 2px 10px rgba(0,0,0,.12); }
+  .controls button:hover { border-color: var(--teal); color: var(--teal); }
+  .controls button:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 0 22px; }
+  a { color: var(--terra); text-underline-offset: 3px; }
+  a:focus-visible, .btn:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; border-radius: 6px; }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; font-variation-settings: "SOFT" 50; }
+
+  /* ---------- Intro ---------- */
+  header { padding: 80px 0 44px; position: relative; overflow: hidden; }
+  header .wrap { position: relative; z-index: 1; }
+  .avatar { position: relative; width: 132px; height: 132px; border-radius: 50%; margin: 0 0 22px; overflow: hidden;
+            border: 4px solid var(--card); box-shadow: 0 0 0 3px var(--terra), 0 10px 28px rgba(80, 40, 20, 0.18);
+            background: var(--terra-bg); }
+  .avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .initials { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+              font-family: var(--serif); font-weight: 600; font-size: 2.6rem; color: var(--terra); }
+  @media (min-width: 700px) { .avatar { width: 150px; height: 150px; } }
+  .hello { font-family: var(--serif); font-style: italic; font-size: 1.25rem; color: var(--terra); margin: 0 0 6px; }
+  h1 { font-size: clamp(2.5rem, 9vw, 4.1rem); line-height: 1.05; margin: 0 0 18px; letter-spacing: -0.015em; font-weight: 600; }
+  .lede { font-size: 1.15rem; margin: 0; max-width: 36em; color: var(--muted); }
+  .where { margin: 14px 0 0; font-size: 0.95rem; color: var(--muted); }
+  .links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+  .btn { display: inline-block; padding: 10px 22px; border-radius: 99px; font-weight: 600; font-size: 0.95rem; text-decoration: none;
+         transition: transform .15s, background .15s; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn.primary { background: var(--terra); color: #fff; }
+  .btn.primary:hover { background: #8d3a21; }
+  .btn.outline { border: 2px solid var(--teal); color: var(--teal); }
+  .btn.outline:hover { background: var(--teal-bg); }
+  :root[data-mode="dark"] .btn.primary { background: #ee9a76; color: #2a1608; }
+  :root[data-mode="dark"] .btn.primary:hover { background: #f6b093; }
+
+  /* ---------- Nav ---------- */
+  nav { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 92%, transparent);
+        backdrop-filter: blur(8px); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  nav .wrap { display: flex; gap: 6px; padding-top: 8px; padding-bottom: 8px; overflow-x: auto; white-space: nowrap; }
+  nav a { color: var(--muted); font-size: 0.93rem; font-weight: 600; padding: 6px 14px; border-radius: 99px; text-decoration: none; }
+  nav a:hover { background: var(--line); color: var(--fg); }
+
+  /* ---------- Sections ---------- */
+  section { padding: 52px 0 4px; scroll-margin-top: 56px; }
+  h2 { font-size: 1.85rem; margin: 0 0 24px; letter-spacing: -0.01em; }
+  h2 span { color: var(--accent, var(--terra)); }
+
+  /* ---------- Highlights ---------- */
+  .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; padding-top: 8px; }
+  @media (min-width: 680px) { .stats { grid-template-columns: repeat(4, 1fr); } }
+  .stat { border-radius: 16px; padding: 16px 18px; background: var(--card); border: 1px solid var(--line); }
+  .stat b { display: block; font-family: var(--serif); font-size: 2.1rem; line-height: 1.1; color: var(--teal); margin-bottom: 4px; }
+  .stat span { display: block; font-size: 0.88rem; line-height: 1.4; color: var(--muted); }
+
+  /* ---------- Cards ---------- */
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 24px 26px; margin-bottom: 18px;
+          border-top: 5px solid var(--c, var(--terra)); }
+  .card.t { --c: var(--terra); --cbg: var(--terra-bg); }
+  .card.l { --c: var(--teal);  --cbg: var(--teal-bg); }
+  .card.g { --c: var(--gold);  --cbg: var(--gold-bg); }
+  .card.s { --c: var(--sage);  --cbg: var(--sage-bg); }
+  .card.b { --c: var(--blue);  --cbg: var(--blue-bg); }
+  /* George Mason's own gold and green, matching the logos */
+  .card.y  { --c: #d19a10; --cbg: #fbebc0; }
+  .card.gr { --c: #005238; --cbg: #d8eadf; }
+  :root[data-mode="dark"] .card.y  { --c: #e0a823; --cbg: #3a2f10; }
+  :root[data-mode="dark"] .card.gr { --c: #3fae80; --cbg: #16352a; }
+  .head { display: flex; justify-content: space-between; gap: 6px 14px; flex-wrap: wrap; align-items: baseline; }
+  .card h3 { margin: 0; font-size: 1.3rem; }
+  .when { font-size: 0.85rem; color: var(--muted); font-weight: 600; white-space: nowrap; }
+  .org { color: var(--muted); margin: 2px 0 14px; font-size: 0.97rem; }
+  ul { margin: 0; padding-left: 1.2rem; }
+  li { margin-bottom: 10px; }
+  li::marker { color: var(--c, var(--terra)); }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { font-size: 0.82rem; font-weight: 600; padding: 3px 13px; border-radius: 99px; background: var(--cbg, var(--terra-bg)); color: var(--fg); }
+  .card .chips { margin: 12px 0 14px; }
+
+  /* ---------- Skills ---------- */
+  .skill { margin-bottom: 22px; }
+  .skill h3 { margin: 0 0 9px; font-size: 1.1rem; color: var(--c); }
+  .skill.t { --c: var(--terra); --cbg: var(--terra-bg); } .skill.l { --c: var(--teal); --cbg: var(--teal-bg); }
+  .skill.g { --c: #8a5a10; --cbg: var(--gold-bg); }       .skill.s { --c: var(--sage); --cbg: var(--sage-bg); }
+  :root[data-mode="dark"] .skill.g { --c: var(--gold); }
+
+  /* ---------- Education ---------- */
+  .edu-grid { display: grid; gap: 16px; }
+  @media (min-width: 680px) { .edu-grid { grid-template-columns: 1fr 1fr; } }
+  .edu-grid .card { margin: 0; }
+  /* Every logo (education + experience) sits in the same white rounded tile, same size, logo centered and uncropped */
+  .logo { display: flex; align-items: center; justify-content: center; width: 176px; height: 96px; padding: 10px 16px; margin-bottom: 16px;
+          background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .logo img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; display: block; }
+  /* the College of Science logo has white lettering, so it sits on George Mason green (its official reversed version) */
+  .logo.green { background: #005238; border-color: #005238; padding: 12px 16px; }
+  /* the Engineering & Computing logo is a square with lots of blank margin: trim it so it reads at the same weight as the others */
+  .logo.crop { padding: 0; }
+  .logo.crop img { width: 148px; height: 148px; max-width: none; max-height: none; flex: none; }
+  .school { font-family: var(--serif); font-weight: 700; font-size: 1.25rem; }
+  .edu-grid p { margin: 2px 0 8px; color: var(--muted); }
+
+  /* ---------- Say hello ---------- */
+  .hello-box { text-align: center; background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 38px 24px; margin: 56px 0 0; }
+  .hello-box h2 { margin-bottom: 8px; }
+  .hello-box p { margin: 0 auto 20px; max-width: 30em; color: var(--muted); }
+  .hello-box .links { justify-content: center; margin: 0; }
+
+  footer { padding: 36px 0 52px; text-align: center; color: var(--muted); font-size: 0.9rem; }
+</style>
+</head>
+<body>
+
+<div id="sky" data-time="day" aria-hidden="true">
+  <div class="stars"></div>
+  <div class="sun"></div>
+  <div class="moon"></div>
+  <div class="clouds"></div>
+  <div class="veil"></div>
+  <canvas id="precip"></canvas>
+  <div class="flash"></div>
+</div>
+
+<header>
+  <div class="wrap">
+    <div class="avatar" aria-hidden="false">
+      <span class="initials" aria-hidden="true">DK</span>
+      <img src="photo.jpg" alt="Photo of Deewosh Karmacharya" width="600" height="600" onerror="this.remove()">
+    </div>
+    <p class="hello">Hello, I'm</p>
+    <h1>Deewosh Karmacharya</h1>
+    <p class="lede">I'm a software engineer who builds and secures cloud platforms. I've led FedRAMP compliance work across 30+ microservices and own DevSecOps platforms in gov-prod environments. I'm also pursuing an M.S. in Computer Science at Georgia Tech.</p>
+    <p class="where">Based in the DMV area (DC, Maryland, Virginia)</p>
+    <div class="links">
+      <a class="btn primary" href="https://github.com/dkarmacharya11">See my GitHub</a>
+      <a class="btn outline" href="https://www.linkedin.com/in/dkarma/">Connect on LinkedIn</a>
+    </div>
+  </div>
+</header>
+
+<nav aria-label="Sections">
+  <div class="wrap">
+    <a href="#experience">Experience</a>
+    <a href="#projects">Projects</a>
+    <a href="#skills">Skills</a>
+    <a href="#education">Education</a>
+    <a href="#leadership">Leadership</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <section aria-label="Highlights" style="padding-top:40px">
+    <div class="stats">
+      <div class="stat a"><b>30+</b><span>services taken through FedRAMP remediation</span></div>
+      <div class="stat b"><b>100+</b><span>security findings resolved</span></div>
+      <div class="stat c"><b>1,000+</b><span>feature flags under CI governance</span></div>
+      <div class="stat d"><b>600+</b><span>students supported as a teaching assistant</span></div>
+    </div>
+  </section>
+
+  <section id="experience">
+    <h2>Where I've <span>worked</span></h2>
+
+    <div class="card b">
+      <div class="logo"><img src="img/deltek.jpg" alt="Deltek logo"></div>
+      <div class="head"><h3>Associate Software Engineer</h3><span class="when">Apr 2026 &ndash; Present</span></div>
+      <p class="org">Deltek &middot; Strategic Solutions Shared Services &middot; Herndon, VA</p>
+      <ul>
+        <li>Shipped an AWS Secrets Manager integration for the Tenant Configuration Service (Java, Spring WebFlux, AWS SDK v2), centralizing OAuth credentials for 10+ tenant environments behind IAM-scoped vault paths. Deployed to production.</li>
+        <li>Administered LaunchDarkly as platform owner, coordinating 50+ flag rollouts across 8 service teams in gov-prod within Agile sprints. Engineered the audit-webhook pipeline on the central OTel collector, streaming events into OpenSearch.</li>
+        <li>Led NIST 800-53 / FedRAMP compliance remediation across 30+ services (int, sandbox, prod) and took part in audit interviews. Resolved 100+ findings across Checkmarx, CrowdStrike, Black Duck (SBOM/SCA) and KICS, raised deviation requests, and hardened Docker images to Oracle Linux 9.</li>
+        <li>Owned the Grafana monitoring platform (15+ dashboards). Integrated LaunchDarkly audit webhooks, root-caused a false-positive OpenSearch disk alert (saving about 4 engineering hours per incident cycle), and added Redis metrics and distributed tracing.</li>
+        <li>Architected a feature-flag governance control plane: a GitHub Actions CI/CD pipeline that validates LaunchDarkly flags across 100+ repos and 1,000+ flags and dispatches automated cleanup workflows behind approval gates and an audit trail.</li>
+      </ul>
+    </div>
+
+    <div class="card y">
+      <div class="logo crop"><img src="img/gmu-ecc.jpg" alt="George Mason University College of Engineering and Computing logo"></div>
+      <div class="head"><h3>Undergraduate Teaching Assistant</h3><span class="when">Aug 2024 &ndash; May 2026</span></div>
+      <p class="org">George Mason University &middot; Fairfax, VA</p>
+      <ul>
+        <li><b>CS 112 (Python):</b> Designed Gradescope pytest auto-grading for 5 projects at 50+ test cases each, cutting grading turnaround by 40% across 603+ students.</li>
+        <li><b>CS 211 (Java, C):</b> Developed JUnit auto-grading frameworks and onboarded 377+ students to Zeus/SSH, VS Code Remote, and GitHub/GitLab workflows.</li>
+        <li><b>CS 405, Ethics and Law in Computing:</b> Ran Kali Linux security labs and graded technical assessments for 300+ students.</li>
+      </ul>
+    </div>
+
+    <div class="card gr">
+      <div class="logo green"><img src="img/gmu-science.svg" alt="George Mason University College of Science logo"></div>
+      <div class="head"><h3>Learning Assistant</h3><span class="when">Jan 2024 &ndash; Nov 2025</span></div>
+      <p class="org">George Mason University &middot; Fairfax, VA</p>
+      <ul>
+        <li>Helped students with their lab reports during office hours, showing them how to use <b>R/RStudio</b> and <b>MATLAB</b> to format their reports.</li>
+        <li>Led 12 General Chemistry review sessions ahead of midterms and finals.</li>
+        <li>Made instructional YouTube videos for students and published them on Canvas (600+ views).</li>      </ul>
+    </div>
+  </section>
+
+  <section id="projects">
+    <h2>Things I'm <span>building</span></h2>
+
+    <div class="card s">
+      <div class="head"><h3>MMS (Roblox Game)</h3><span class="when">Nov 2026 &ndash; Present</span></div>
+      <div class="chips"><span class="chip">Luau</span><span class="chip">Roblox Studio</span><span class="chip">Rojo</span><span class="chip">Git</span></div>
+      <p style="margin:0">A multiplayer game in Luau with a server-authoritative architecture, cheat-proof state management, and data-driven progression tiers.</p>
+    </div>
+  </section>
+
+  <section id="skills">
+    <h2>What I <span>work with</span></h2>
+
+    <div class="skill t"><h3>Languages</h3>
+      <div class="chips"><span class="chip">Java</span><span class="chip">Python</span><span class="chip">JavaScript</span><span class="chip">TypeScript</span><span class="chip">C</span><span class="chip">C++</span><span class="chip">SQL</span></div></div>
+
+    <div class="skill l"><h3>Cloud and DevSecOps</h3>
+      <div class="chips"><span class="chip">AWS (Secrets Manager, IAM, ECS)</span><span class="chip">Azure</span><span class="chip">Docker</span><span class="chip">Kubernetes</span><span class="chip">Terraform (IaC)</span><span class="chip">Git</span><span class="chip">GitHub Actions</span><span class="chip">Argo Workflows</span><span class="chip">LaunchDarkly</span></div></div>
+
+    <div class="skill g"><h3>Security and Observability</h3>
+      <div class="chips"><span class="chip">Black Duck (SCA/SBOM)</span><span class="chip">Checkmarx (SAST)</span><span class="chip">KICS</span><span class="chip">CrowdStrike</span><span class="chip">NIST 800-53</span><span class="chip">CVE remediation</span><span class="chip">FIPS hardening</span><span class="chip">Grafana</span><span class="chip">OpenSearch</span><span class="chip">Monitoring</span><span class="chip">Linux (Oracle, RHEL)</span></div></div>
+
+    <div class="skill s"><h3>Backend, Data and Analytics</h3>
+      <div class="chips"><span class="chip">Spring Boot</span><span class="chip">Spring WebFlux</span><span class="chip">Node.js</span><span class="chip">Express.js</span><span class="chip">Microservices</span><span class="chip">REST APIs</span><span class="chip">JWT</span><span class="chip">RBAC</span><span class="chip">MongoDB</span><span class="chip">PostgreSQL</span><span class="chip">Data analytics</span></div></div>
+
+    <div class="skill t"><h3>Testing, Tools and Frontend</h3>
+      <div class="chips"><span class="chip">JUnit</span><span class="chip">pytest</span><span class="chip">Postman</span><span class="chip">Agile/Scrum</span><span class="chip">React.js</span><span class="chip">Next.js</span><span class="chip">Angular</span><span class="chip">LLM integrations</span></div></div>
+  </section>
+
+  <section id="education">
+    <h2>Where I <span>studied</span></h2>
+    <div class="edu-grid">
+      <div class="card l">
+        <div class="logo"><img src="img/gatech.svg" alt="Georgia Tech seal"></div>
+        <div class="school">Georgia Tech</div>
+        <p>M.S. in Computer Science</p>
+        <span class="when">Aug 2026 &ndash; May 2029 (expected)</span>
+      </div>
+      <div class="card t">
+        <div class="logo"><img src="img/gmu.png" alt="George Mason University logo"></div>
+        <div class="school">George Mason University</div>
+        <p>B.S. in Computer Science &middot; GPA 3.64</p>
+        <span class="when">Aug 2022 &ndash; May 2026</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="leadership">
+    <h2><span>Leadership</span></h2>
+    <div class="card g">
+      <div class="head"><h3>Vice President, Innovate 4 Impact</h3><span class="when">Aug 2024 &ndash; May 2026</span></div>
+      <p class="org" style="margin-bottom:0">A 100+ member student organization delivering software projects for partner organizations at no cost.</p>
+    </div>
+  </section>
+
+  <div class="hello-box">
+    <h2>Let's connect</h2>
+    <p>I'm always happy to talk about software, security, or interesting projects. Say hello on LinkedIn or take a look at my code on GitHub.</p>
+    <div class="links">
+      <a class="btn primary" href="https://www.linkedin.com/in/dkarma/">LinkedIn</a>
+      <a class="btn outline" href="https://github.com/dkarmacharya11">GitHub</a>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="wrap">&copy; 2026 Deewosh Karmacharya</div>
+</footer>
+
+<div class="controls" role="group" aria-label="Background settings">
+  <button id="btnTheme" type="button">Theme: Light</button></div>
+
+<script>
+/* Live sky: real current weather + day/night for the DMV area (Open-Meteo, no key needed).
+   Preview any scene by adding ?sky=night-rain (day|night - clear|partly|cloudy|fog|rain|snow|storm) to the URL.
+   Visitors can switch theme (Auto/Light/Dark) and turn motion off; choices are remembered on their device. */
+(function () {
+  var sky = document.getElementById('sky'), root = document.documentElement;
+  var cloudsEl = sky.querySelector('.clouds'), starsEl = sky.querySelector('.stars');
+  var sun = sky.querySelector('.sun'), moon = sky.querySelector('.moon'), flash = sky.querySelector('.flash');
+  var canvas = document.getElementById('precip'), ctx = canvas.getContext('2d');
+  var btnTheme = document.getElementById('btnTheme');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var raf = 0, flashTimer = 0, parts = [], pType = '', pTime = 'day';
+
+  /* ----- saved preferences ----- */
+  var prefs = { theme: 'light', motion: reduce ? 'off' : 'on' };
+  try {
+    var t = localStorage.getItem('sky-theme');
+    if (t === 'auto' || t === 'light' || t === 'dark') prefs.theme = t;
+  } catch (e) { /* storage blocked: defaults are fine */ }
+  function save(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+  var scene = { time: 'day', kind: 'clear', intensity: 0, cover: 10 };
+
+  var SKIES = {
+    day:   { clear: ['#7cc4ff', '#e6f4ff'], partly: ['#8cc6f2', '#edf3f8'], cloudy: ['#b3bfcc', '#e4e9ee'], fog: ['#cdd3d8', '#eceeef'],
+             rain: ['#a3afbe', '#d4dae1'], snow: ['#c8d4e1', '#f1f4f7'], storm: ['#7a8797', '#b1bac6'] },
+    night: { clear: ['#0a0d1c', '#1b2552'], partly: ['#0c1020', '#1e2756'], cloudy: ['#0f1118', '#272b3a'], fog: ['#14161a', '#30343c'],
+             rain: ['#0c0e15', '#232a3c'], snow: ['#0f1219', '#293045'], storm: ['#080a0f', '#1c212e'] }
+  };
+  var CLOUD = {
+    day:   { clear: '#ffffff', partly: '#ffffff', cloudy: '#f3f5f7', fog: '#f3f4f5', rain: '#8d99a9', snow: '#e9eef3', storm: '#5d6878' },
+    night: { clear: '#2a3558', partly: '#2a3558', cloudy: '#2e374e', fog: '#2f3646', rain: '#222a3d', snow: '#343f57', storm: '#1b2231' }
+  };
+  var MIN_CLOUDS = { clear: 1, partly: 3, cloudy: 5, fog: 3, rain: 5, snow: 4, storm: 6 };
+
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+
+  function describe(c) {            // WMO weather code -> [kind, words, intensity]
+    if (c === 0) return ['clear', 'clear skies', 0];
+    if (c === 1) return ['clear', 'mostly clear', 0];
+    if (c === 2) return ['partly', 'partly cloudy', 0];
+    if (c === 3) return ['cloudy', 'overcast', 0];
+    if (c === 45 || c === 48) return ['fog', 'foggy', 0];
+    if (c >= 51 && c <= 55) return ['rain', 'drizzle', 0.4];
+    if (c === 56 || c === 57 || c === 66 || c === 67) return ['rain', 'freezing rain', 0.7];
+    if (c === 61) return ['rain', 'light rain', 0.6];
+    if (c === 63) return ['rain', 'rain', 0.9];
+    if (c === 65) return ['rain', 'heavy rain', 1.2];
+    if (c >= 80 && c <= 82) return ['rain', 'rain showers', c === 82 ? 1.2 : 0.8];
+    if (c === 71 || c === 77) return ['snow', 'light snow', 0.6];
+    if (c === 73 || c === 85) return ['snow', 'snow', 0.9];
+    if (c === 75 || c === 86) return ['snow', 'heavy snow', 1.2];
+    if (c >= 95) return ['storm', 'thunderstorms', 1.2];
+    return ['partly', 'partly cloudy', 0];
+  }
+
+  function buildClouds(kind, time, cover) {
+    cloudsEl.innerHTML = '';
+    var n = Math.min(7, Math.max(MIN_CLOUDS[kind], Math.round(cover / 20)));
+    var low = (kind === 'rain' || kind === 'storm' || kind === 'cloudy');
+    for (var i = 0; i < n; i++) {
+      var c = document.createElement('div'), dur = rnd(110, 220);
+      c.className = 'cloud';
+      c.style.setProperty('--y', rnd(low ? 0 : 3, low ? 36 : 50).toFixed(1) + 'vh');
+      c.style.setProperty('--w', rnd(22, 40).toFixed(1) + 'vw');
+      c.style.setProperty('--o', rnd(low ? 0.65 : 0.5, 0.9).toFixed(2));
+      c.style.setProperty('--dur', dur.toFixed(0) + 's');
+      c.style.setProperty('--delay', (-rnd(0, dur)).toFixed(0) + 's');
+      c.style.setProperty('--x', rnd(0, 70).toFixed(0) + 'vw');
+      c.style.setProperty('--cloud', CLOUD[time][kind]);
+      cloudsEl.appendChild(c);
+    }
+  }
+
+  function buildStars() {
+    starsEl.innerHTML = '';
+    for (var i = 0; i < 70; i++) {
+      var s = document.createElement('i'), sz = rnd(1, 2.6);
+      s.style.cssText = 'left:' + rnd(0, 100).toFixed(1) + '%;top:' + rnd(0, 80).toFixed(1) + '%;width:' + sz + 'px;height:' + sz +
+                        'px;animation-delay:' + (-rnd(0, 3.5)).toFixed(2) + 's;animation-duration:' + rnd(3, 6).toFixed(1) + 's';
+      starsEl.appendChild(s);
+    }
+  }
+
+  /* ----- rain / snow canvas (kept light: fewer, fainter drops) ----- */
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  function stopPrecip() { cancelAnimationFrame(raf); raf = 0; parts = []; pType = ''; ctx.clearRect(0, 0, canvas.width, canvas.height); }
+  function startPrecip(type, intensity, time) {
+    stopPrecip();
+    if (!type || prefs.motion === 'off') return;
+    resize(); pType = type; pTime = time;
+    var n = Math.min(type === 'rain' ? 200 : 110, Math.round(canvas.width * intensity / (type === 'rain' ? 8 : 14)));
+    for (var i = 0; i < n; i++) {
+      parts.push(type === 'rain'
+        ? { x: rnd(0, canvas.width), y: rnd(0, canvas.height), l: rnd(10, 22), v: rnd(12, 19) }
+        : { x: rnd(0, canvas.width), y: rnd(0, canvas.height), r: rnd(1.4, 3.2), v: rnd(0.6, 1.5), p: rnd(0, 6.28) });
+    }
+    (function frame() {
+      var w = canvas.width, h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+      if (pType === 'rain') {
+        ctx.strokeStyle = pTime === 'day' ? 'rgba(55, 80, 118, .35)' : 'rgba(190, 210, 245, .38)';
+        ctx.lineWidth = 1.1; ctx.beginPath();
+        for (var i = 0; i < parts.length; i++) {
+          var d = parts[i];
+          ctx.moveTo(d.x, d.y); ctx.lineTo(d.x - d.l * 0.22, d.y + d.l);
+          d.y += d.v; d.x -= d.v * 0.22;
+          if (d.y > h) { d.y = -d.l; d.x = rnd(0, w + 60); }
+        }
+        ctx.stroke();
+      } else {
+        ctx.fillStyle = 'rgba(255, 255, 255, .9)';
+        ctx.strokeStyle = pTime === 'day' ? 'rgba(120, 145, 180, .5)' : 'rgba(255, 255, 255, .2)';
+        ctx.lineWidth = 1;
+        for (var j = 0; j < parts.length; j++) {
+          var f = parts[j];
+          f.p += 0.012; f.y += f.v; f.x += Math.sin(f.p) * 0.5;
+          if (f.y > h + 6) { f.y = -6; f.x = rnd(0, w); }
+          ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, 6.283); ctx.fill(); ctx.stroke();
+        }
+      }
+      raf = requestAnimationFrame(frame);
+    })();
+  }
+
+  /* ----- put the scene on screen ----- */
+  function displayTime() {
+    return prefs.theme === 'auto' ? scene.time : (prefs.theme === 'dark' ? 'night' : 'day');
+  }
+
+  function applyMotion() {
+    var off = prefs.motion === 'off';
+    sky.classList.toggle('still', off);
+    clearInterval(flashTimer);
+    var type = scene.kind === 'rain' || scene.kind === 'storm' ? 'rain' : (scene.kind === 'snow' ? 'snow' : '');
+    startPrecip(type, scene.intensity, displayTime());
+    if (scene.kind === 'storm' && !off) {
+      flashTimer = setInterval(function () {
+        flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go');
+      }, 9000);
+    }
+  }
+
+  function render() {
+    var time = displayTime(), kind = scene.kind;
+    sky.dataset.time = time;
+    root.dataset.mode = time === 'day' ? 'light' : 'dark';
+    var pal = SKIES[time][kind];
+    sky.style.setProperty('--sky-top', pal[0]);
+    sky.style.setProperty('--sky-bot', pal[1]);
+    var overcast = (kind !== 'clear' && kind !== 'partly');
+    sun.classList.toggle('dim', overcast); moon.classList.toggle('dim', overcast);
+    if (time === 'night' && !overcast) buildStars(); else starsEl.innerHTML = '';
+    buildClouds(kind, time, scene.cover);
+    btnTheme.textContent = 'Theme: ' + prefs.theme.charAt(0).toUpperCase() + prefs.theme.slice(1);
+    applyMotion();
+  }
+
+  function apply(time, kind, intensity, cover) {
+    scene = { time: time, kind: kind, intensity: intensity, cover: cover };
+    render();
+  }
+
+  /* ----- the sky fades back as you scroll so the text stays easy to read ----- */
+  var ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      var p = Math.min(1, window.scrollY / (window.innerHeight * 0.8));
+      sky.style.setProperty('--veil', (45 + 42 * p).toFixed(1));
+      canvas.style.opacity = (1 - 0.65 * p).toFixed(2);
+      ticking = false;
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* ----- controls ----- */
+  btnTheme.addEventListener('click', function () {
+    prefs.theme = prefs.theme === 'auto' ? 'light' : (prefs.theme === 'light' ? 'dark' : 'auto');
+    save('sky-theme', prefs.theme);
+    render();
+  });
+  window.addEventListener('resize', function () { if (pType) startPrecip(pType, scene.intensity, pTime); });
+
+  // 1) Preview mode:  ?sky=night-rain
+  var m = /[?&]sky=(day|night)-(clear|partly|cloudy|fog|rain|snow|storm)/.exec(location.search);
+  if (m) {
+    var cov = { clear: 5, partly: 45, cloudy: 90, fog: 80, rain: 90, snow: 85, storm: 100 }[m[2]];
+    apply(m[1], m[2], m[2] === 'storm' ? 1.2 : 0.9, cov);
+    return;
+  }
+
+  // 2) Instant guess from the visitor's clock, then 3) replace it with the real DMV weather.
+  var h = new Date().getHours();
+  apply(h >= 7 && h < 19 ? 'day' : 'night', 'clear', 0, 10);
+  fetch('https://api.open-meteo.com/v1/forecast?latitude=38.9&longitude=-77.04&current=temperature_2m,weather_code,cloud_cover,is_day&temperature_unit=fahrenheit&timezone=America%2FNew_York')
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      var c = d.current, info = describe(c.weather_code);
+      apply(c.is_day ? 'day' : 'night', info[0], info[2], c.cloud_cover || 0);
+    })
+    .catch(function () { /* offline: keep the clock-based sky */ });
+})();
+</script>
+
+</body>
+</html>
