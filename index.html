@@ -166,7 +166,14 @@
 
   /* ---------- Say hello ---------- */
   .hello-box { text-align: center; background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 38px 24px; margin: 56px 0 0; }
-  .hello-box h2 { margin-bottom: 8px; }
+  .hello-box h2 { margin-bottom: 22px; }
+  /* make the three contact buttons stand out: solid teal, larger, lifted shadow, bouncy hover */
+  .hello-box .btn { padding: 14px 28px; font-size: 1.05rem; background: var(--terra); color: #fff; border: 2px solid var(--terra);
+                    box-shadow: 0 6px 16px rgba(168, 71, 42, .35); transition: transform .18s, box-shadow .18s, filter .18s; }
+  .hello-box .btn:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 12px 26px rgba(168, 71, 42, .45); filter: brightness(1.08); }
+  .hello-box .btn.icon svg { width: 21px; height: 21px; }
+  :root[data-mode="dark"] .hello-box .btn { color: #2a1608; box-shadow: 0 6px 18px rgba(240, 160, 128, .25); }
+  :root[data-mode="dark"] .hello-box .btn:hover { box-shadow: 0 12px 28px rgba(240, 160, 128, .4); }
   .hello-box p { margin: 0 auto 20px; max-width: 30em; color: var(--muted); }
   .hello-box .links { justify-content: center; margin: 0; }
   .hello-box .phone { margin: 22px auto 0; font-size: 0.95rem; line-height: 1.9; }
@@ -319,7 +326,6 @@
 
   <div class="hello-box">
     <h2>Let's connect</h2>
-    <p>I'm always happy to talk about software, security, or interesting projects. Send me an email, say hello on LinkedIn, or take a look at my code on GitHub.</p>
     <div class="links">
       <a class="btn outline icon" href="mailto:dkarmach22@gmail.com">
         <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7.5 12 13.5l8.5-6"/></svg>
