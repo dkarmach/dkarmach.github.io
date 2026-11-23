@@ -11,16 +11,16 @@
 <style>
   :root {
     --bg: #fbf6ee; --fg: #2a2118; --muted: #6a5c4d; --card: #fffdf8; --line: #eadfcc;
-    --terra: #a8472a; --teal: #1d6a66; --gold: #b7791f; --sage: #4f6e44; --blue: #2149e6; --blue-bg: #e1e7fc;
-    --terra-bg: #f6e3da; --teal-bg: #dcefec; --gold-bg: #f6e8cc; --sage-bg: #e3edd9;
+    --terra: #2a56d4; --teal: #1d6a66; --gold: #b7791f; --sage: #4f6e44; --blue: #2149e6; --blue-bg: #e1e7fc;
+    --terra-bg: #e2e9fb; --teal-bg: #dcefec; --gold-bg: #f6e8cc; --sage-bg: #e3edd9;
     --serif: "Fraunces", Georgia, "Times New Roman", serif;
     --sans: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   }
   /* Night scene = dark palette. The script sets data-mode from the live sky (day -> light, night -> dark). */
   :root[data-mode="dark"] {
     --bg: #1a1c20; --fg: #f4f2ee; --muted: #c0bcb3; --card: #24262b; --line: #3a3d43;
-    --terra: #f0a080; --teal: #72cbc4; --gold: #ebbb5c; --sage: #aac998; --blue: #7d9bff; --blue-bg: #1e2a5a;
-    --terra-bg: #3a2318; --teal-bg: #183a38; --gold-bg: #3a2f17; --sage-bg: #243126;
+    --terra: #8fadff; --teal: #72cbc4; --gold: #ebbb5c; --sage: #aac998; --blue: #7d9bff; --blue-bg: #1e2a5a;
+    --terra-bg: #1e2b57; --teal-bg: #183a38; --gold-bg: #3a2f17; --sage-bg: #243126;
   }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
@@ -74,7 +74,7 @@
   header { padding: 80px 0 44px; position: relative; overflow: hidden; }
   header .wrap { position: relative; z-index: 1; }
   .avatar { position: relative; width: 132px; height: 132px; border-radius: 50%; margin: 0 0 22px; overflow: hidden;
-            border: 4px solid var(--card); box-shadow: 0 0 0 3px var(--terra), 0 10px 28px rgba(80, 40, 20, 0.18);
+            border: 4px solid var(--card); box-shadow: 0 0 0 3px var(--terra), 0 10px 28px rgba(20, 30, 70, 0.18);
             background: var(--terra-bg); }
   .avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .initials { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
@@ -89,13 +89,13 @@
          transition: transform .15s, background .15s; }
   .btn:hover { transform: translateY(-2px); }
   .btn.primary { background: var(--terra); color: #fff; }
-  .btn.primary:hover { background: #8d3a21; }
+  .btn.primary:hover { background: #1f43b0; }
   .btn.outline { border: 2px solid var(--teal); color: var(--teal); }
   .btn.outline:hover { background: var(--teal-bg); }
   .btn.icon { display: inline-flex; align-items: center; gap: 9px; }
   .btn.icon svg { width: 18px; height: 18px; flex: none; }
-  :root[data-mode="dark"] .btn.primary { background: #ee9a76; color: #2a1608; }
-  :root[data-mode="dark"] .btn.primary:hover { background: #f6b093; }
+  :root[data-mode="dark"] .btn.primary { background: #8fadff; color: #0b1636; }
+  :root[data-mode="dark"] .btn.primary:hover { background: #aac0ff; }
 
   /* ---------- Nav ---------- */
   nav { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 92%, transparent);
@@ -124,6 +124,8 @@
   .card.g { --c: var(--gold);  --cbg: var(--gold-bg); }
   .card.s { --c: var(--sage);  --cbg: var(--sage-bg); }
   .card.b { --c: var(--blue);  --cbg: var(--blue-bg); }
+  .card.n { --c: #b9b2a6; --cbg: var(--line); }                         /* neutral outline (education) */
+  :root[data-mode="dark"] .card.n { --c: #565b63; }
   /* George Mason's own gold and green, matching the logos */
   .card.y  { --c: #d19a10; --cbg: #fbebc0; }
   .card.gr { --c: #005238; --cbg: #d8eadf; }
@@ -169,11 +171,11 @@
   .hello-box h2 { margin-bottom: 22px; }
   /* make the three contact buttons stand out: solid teal, larger, lifted shadow, bouncy hover */
   .hello-box .btn { padding: 14px 28px; font-size: 1.05rem; background: var(--terra); color: #fff; border: 2px solid var(--terra);
-                    box-shadow: 0 6px 16px rgba(168, 71, 42, .35); transition: transform .18s, box-shadow .18s, filter .18s; }
-  .hello-box .btn:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 12px 26px rgba(168, 71, 42, .45); filter: brightness(1.08); }
+                    box-shadow: 0 6px 16px rgba(42, 86, 212, .35); transition: transform .18s, box-shadow .18s, filter .18s; }
+  .hello-box .btn:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 12px 26px rgba(42, 86, 212, .45); filter: brightness(1.08); }
   .hello-box .btn.icon svg { width: 21px; height: 21px; }
-  :root[data-mode="dark"] .hello-box .btn { color: #2a1608; box-shadow: 0 6px 18px rgba(240, 160, 128, .25); }
-  :root[data-mode="dark"] .hello-box .btn:hover { box-shadow: 0 12px 28px rgba(240, 160, 128, .4); }
+  :root[data-mode="dark"] .hello-box .btn { color: #0b1636; box-shadow: 0 6px 18px rgba(143, 173, 255, .25); }
+  :root[data-mode="dark"] .hello-box .btn:hover { box-shadow: 0 12px 28px rgba(143, 173, 255, .4); }
   .hello-box p { margin: 0 auto 20px; max-width: 30em; color: var(--muted); }
   .hello-box .links { justify-content: center; margin: 0; }
   .hello-box .phone { margin: 22px auto 0; font-size: 0.95rem; line-height: 1.9; }
@@ -263,8 +265,8 @@
       <div class="head"><h3>Learning Assistant</h3><span class="when">Jan 2024 &ndash; Nov 2025</span></div>
       <p class="org">George Mason University &middot; Fairfax, VA</p>
       <ul>
-        <li>Helped students with their lab reports during office hours, showing them how to use <b>R/RStudio</b> and <b>MATLAB</b> to format their reports.</li>
-        <li>Led 12 General Chemistry review sessions ahead of midterms and finals.</li>
+        <li>Helped students in General Chemistry I and II and their labs with lab reports during office hours, showing them how to use <b>R/RStudio</b> and <b>MATLAB</b> to format their reports.</li>
+        <li>Led 12 review sessions for General Chemistry I and II ahead of midterms and finals.</li>
         <li>Made instructional YouTube videos for students and published them on Canvas (600+ views).</li>      </ul>
     </div>
   </section>
@@ -299,15 +301,15 @@
   </section>
 
   <section id="education">
-    <h2>Where I <span>studied</span></h2>
+    <h2><span>Education</span></h2>
     <div class="edu-grid">
-      <div class="card l">
+      <div class="card n">
         <div class="logo"><img src="img/gatech.svg" alt="Georgia Tech seal"></div>
         <div class="school">Georgia Tech</div>
-        <p>M.S. in Computer Science</p>
+        <p>M.S. in Computer Science, Specialization in Artificial Intelligence</p>
         <span class="when">Aug 2026 &ndash; May 2029 (expected)</span>
       </div>
-      <div class="card t">
+      <div class="card n">
         <div class="logo"><img src="img/gmu.png" alt="George Mason University logo"></div>
         <div class="school">George Mason University</div>
         <p>B.S. in Computer Science &middot; GPA 3.64</p>
